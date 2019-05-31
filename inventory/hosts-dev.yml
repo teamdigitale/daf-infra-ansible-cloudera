@@ -1,0 +1,6 @@
+---
+
+all:
+  hosts:
+vars:
+  current_environment: dev

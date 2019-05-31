@@ -12,5 +12,5 @@
       lineinfile:
         dest: /etc/resolv.conf
         regexp: "search"
-        line: "search cloudera.dev.daf.teamdigitale.internal"
+        line: "search cloudera.{{ current_environment }}.daf.teamdigitale.internal"
         state: present
