@@ -1,0 +1,16 @@
+---
+
+- name: Ansible for bootstrap playbook for Cloudera instances
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+
+  tasks:
+    - name: Add search domain to /etc/resolv.conf
+      lineinfile:
+        dest: /etc/resolv.conf
+        regexp: "search"
+        line: "search cloudera.dev.daf.teamdigitale.internal"
+        state: present
