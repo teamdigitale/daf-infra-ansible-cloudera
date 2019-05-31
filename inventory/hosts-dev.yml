@@ -2,5 +2,9 @@
 
 all:
   hosts:
-vars:
-  current_environment: dev
+    localhost:
+      vars:
+        ansible_connection: local
+        ansible_python_interpreter: "{{ansible_playbook_python}}"
+  vars:
+    current_environment: dev
