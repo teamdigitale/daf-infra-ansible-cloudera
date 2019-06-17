@@ -1,16 +1,22 @@
 {
-  "name": "dev-cluster-08",
+  "name": "dev-cluster-09",
   "productVersions": {
-    "CDH": "5"
+    "CDH": "5.12",
+    "KAFKA": "2.2.0",
+    "KUDU" : "1.4.0",
+    "SPARK2_ON_YARN": "2.2.0"
   },
   "services": [
     "HBASE",
     "HDFS",
     "HIVE",
     "HUE",
+    "KAFKA",
+    "KUDU",
     "IMPALA",
     "OOZIE",
     "SPARK_ON_YARN",
+    "SPARK2_ON_YARN"
     "YARN",
     "ZOOKEEPER"
   ],
@@ -68,16 +74,25 @@
     }],
       "minCount": 1,
       "serviceTypeToRoleTypes": {
-        "SPARK_ON_YARN": [
-          "GATEWAY"
-        ],
-        "HIVE": [
+        "HBASE": [
           "GATEWAY"
         ],
         "HDFS": [
           "GATEWAY"
         ],
-        "HBASE": [
+        "HIVE": [
+          "GATEWAY"
+        ],
+        "KAFKA": [
+          "GATEWAY"
+        ],
+        "KUDU": [
+          "GATEWAY"
+        ],
+        "SPARK_ON_YARN": [
+          "GATEWAY"
+        ],
+        "SPARK2_ON_YARN": [
           "GATEWAY"
         ],
         "YARN": [
@@ -86,10 +101,10 @@
       },
       "roleTypesConfigs": {}
     },
-    "data": {
-      "name": "data",
+    "worker": {
+      "name": "worker",
       "virtualInstances": [{
-        "id": "iep5euPh-809f-42e6-bc21-e6acd7bb3a51-data-01",
+        "id": "iep5euPh-809f-42e6-bc21-e6acd7bb3a51-worker-01",
         "template": {
             "name": "edge-template",
             "type": "STANDARD_DS12_V2",
@@ -124,7 +139,7 @@
         }
       },
       {
-        "id": "Opheec4B-809f-42e6-bc21-e6acd7bb3a51-data-02",
+        "id": "Opheec4B-809f-42e6-bc21-e6acd7bb3a51-worker-02",
         "template": {
             "name": "edge-template",
             "type": "STANDARD_DS12_V2",
@@ -159,7 +174,7 @@
         }
                            },
                           {
-        "id": "Theij7fu-809f-42e6-bc21-e6acd7bb3a51-data-03",
+        "id": "Theij7fu-809f-42e6-bc21-e6acd7bb3a51-worker-03",
         "template": {
             "name": "edge-template",
             "type": "STANDARD_DS12_V2",
@@ -201,14 +216,47 @@
         "HDFS": [
           "DATANODE"
         ],
+        "KUDU": [
+          "KUDU_TSERVER"
+        ],
         "IMPALA": [
           "IMPALAD"
+        ],
+        "SPARK_ON_YARN": [
+          "GATEWAY"
+        ],
+        "SPARK2_ON_YARN": [
+          "GATEWAY"
         ],
         "YARN": [
           "NODEMANAGER"
         ]
       },
-      "roleTypesConfigs": {}
+      "roleTypesConfigs": {
+        "HDFS": {
+          "DATANODE": {
+            "dfs_data_dir_list": "/data1/dfs/dn,/data2/dfs/dn,/data3/dfs/dn,/data4/dfs/dn,/data5/dfs/dn",
+            "dfs_datanode_failed_volumes_tolerated": "2"
+          }
+        },
+        "KUDU": {
+          "KUDU_TSERVER": {
+            "fs_wal_dir": "/data1/kudu/tabletwal",
+            "fs_data_dirs": "/data2/kudu/tablet,/data3/kudu/tablet,/data4/kudu/tablet"
+          }
+        },
+        "IMPALA": {
+          "IMPALAD": {
+            "scratch_dirs": "/data1/impala/impalad,/data2/impala/impalad,/data3/impala/impalad,/data4/impala/impalad,/data5/impala/impalad"
+          }
+        },
+        "YARN": {
+          "NODEMANAGER": {
+            "yarn_nodemanager_local_dirs": "/data1/yarn/nm,/data2/yarn/nm,/data3/yarn/nm,/data4/yarn/nm,/data5/yarn/nm",
+            "yarn_nodemanager_log_dirs": "/data1/yarn/container-logs,/data2/yarn/container-logs,/data3/yarn/container-logs,/data4/yarn/container-logs,/data5/yarn/container-logs"
+          }
+        }
+      }
     },
     "masters": {
       "name": "masters",
@@ -254,7 +302,8 @@
           "HIVESERVER2"
         ],
         "HUE": [
-          "HUE_SERVER"
+          "HUE_SERVER",
+          "HUE_LOAD_BALANCER"
         ],
         "ZOOKEEPER": [
           "SERVER"
@@ -268,7 +317,14 @@
           "BALANCER"
         ],
         "HBASE": [
-          "MASTER"
+          "MASTER",
+          "HBASETHRIFTSERVER"
+        ],
+        "KAFKA": [
+          "KAFKA_BROKER"
+        ],
+        "KUDU": [
+          "KUDU_MASTER"
         ],
         "IMPALA": [
           "CATALOGSERVER",
@@ -279,10 +335,45 @@
           "JOBHISTORY"
         ],
         "SPARK_ON_YARN": [
+          "GATEWAY",
           "SPARK_YARN_HISTORY_SERVER"
+        ],
+        "SPARK2_ON_YARN": [
+          "GATEWAY",
+          "SPARK2_YARN_HISTORY_SERVER"
         ]
       },
-      "roleTypesConfigs": {}
+      "roleTypesConfigs": {
+        "HDFS": {
+          "NAMENODE": {
+            "dfs_name_dir_list": "/data2/dfs/nn",
+            "namenode_java_heapsize": "4294967296"
+          }
+        },
+        "HIVE": {
+          "HIVESERVER2": {
+            "hiveserver2_spark_executor_cores": "4"
+          }
+        },
+        "KAFKA": {
+          "KAFKA_BROKER": {
+            #"broker_max_heap_size": "512",
+            "log.dirs": "/data3/kafka/data"
+          }
+        },
+        "KUDU": {
+          "KUDU_MASTER": {
+            "fs_wal_dir": "/data4/kudu/masterwal",
+            "fs_data_dirs": "/data5/kudu/master"
+        },
+        "ZOOKEEPER": {
+          "SERVER": {
+            "dataDir": "/data1/zk",
+            "dataLogDir": "/data1/zk",
+            "maxClientCnxns": "500"
+          }
+        }
+      }
     }
   },
   "externalDatabaseTemplates": {
@@ -303,6 +394,9 @@
     }
   },
   "parcelRepositories": [
-    "http://archive.cloudera.com/cdh5/parcels/5.12/"
+    "http://archive.cloudera.com/cdh5/parcels/5.12/",
+    "http://archive.cloudera.com/kafka/parcels/2.2.0/",
+    "https://archive.cloudera.com/kudu/parcels/latest/",
+    "http://archive.cloudera.com/spark2/parcels/2.2.0.cloudera4/"
   ]
 }

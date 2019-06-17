@@ -82,14 +82,18 @@
         },
         "SERVICEMONITOR": {
             "mgmt_log_dir": "/data0/log/cloudera-scm-firehose",
-            "firehose_storage_dir": "/data0/lib/cloudera-service-monitor"
+            "firehose_storage_dir": "/data0/lib/cloudera-service-monitor",
+            "firehose_heapsize": "6442450944",
+            "firehose_non_java_memory_bytes": "6442450944"
         },
         "ACTIVITYMONITOR": {
             "mgmt_log_dir": "/data0/log/cloudera-scm-firehose"
         },
         "HOSTMONITOR": {
             "mgmt_log_dir": "/data0/log/cloudera-scm-firehose",
-            "firehose_storage_dir": "/data0/lib/cloudera-host-monitor"
+            "firehose_storage_dir": "/data0/lib/cloudera-host-monitor",
+            "firehose_heapsize": "2147483648",
+            "firehose_non_java_memory_bytes": "2147483648"
         },
         "REPORTSMANAGER": {
             "headlamp_scratch_dir": "/data0/lib/cloudera-scm-headlamp",
@@ -117,5 +121,8 @@
     "tlsEnabled": false,
     "cmVersion": "6.2.0",
     "enableEnterpriseTrial": true,
-    "javaInstallationStrategy": "AUTO"
+    "javaInstallationStrategy": "AUTO",
+    "csds": [
+      "http://archive.cloudera.com/spark2/csd/SPARK2_ON_YARN-2.2.0.cloudera4.jar"
+    ]
 }
