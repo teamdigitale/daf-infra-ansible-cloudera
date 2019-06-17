@@ -1,0 +1,19 @@
+{
+  "name": "azureTest",
+  "provider": {
+    "type": "azure",
+    "config": {
+        "region": "westeurope",
+        "azureCloudEnvironment": "azure",
+        "subscriptionId": "84ac4389-080d-45f2-b32e-7d00aafd9c73",
+        "tenantId": "c764a4bd-042c-4d4b-90b4-4086d86adf39",
+        "clientId": "23384d3d-b5b0-47f6-8425-401297b20238",
+        "clientSecret": "xxxxxxxxxxxxxx"
+    }
+  },
+  "credentials": {
+      "username": "teamdigitale",
+      "port": 22,
+      "privateKey": "-----BEGIN RSA PRIVATE KEY-----\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n-----END RSA PRIVATE KEY-----"
+  }
+}
