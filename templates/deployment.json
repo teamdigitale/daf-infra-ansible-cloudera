@@ -1,9 +1,9 @@
 {
-    "name": "CM-Massimo-01",
+    "name": "dev-cm-01",
     "managerVirtualInstance": {
-        "id": "mryptjho-cm-01",
+        "id": "038e74ea-6fef-41e4-b367-28d6d963bbdc",
         "template": {
-            "name": "edge-template",
+            "name": "basic-node-template",
             "type": "STANDARD_DS12_V2",
             "image": "cloudera-centos-75-latest",
             "rackId": "/default",
@@ -19,11 +19,11 @@
                 "virtualNetworkResourceGroup": "daf-dev-rg",
                 "automatic": "false",
                 "publicIP": "No",
-                "dataDiskCount": "5",
+                "dataDiskCount": "3",
                 "subnetName": "daf-dev-subnet-cloudera",
                 "virtualNetwork": "daf-dev-vnet-cloudera",
                 "computeResourceGroup": "daf-dev-rg",
-                "instanceNamePrefix": "director",
+                "instanceNamePrefix": "devcm",
                 "storageAccountType": "Standard_LRS",
                 "useCustomManagedImage": "No",
                 "networkSecurityGroupResourceGroup": "daf-dev-rg",
@@ -83,8 +83,8 @@
         "SERVICEMONITOR": {
             "mgmt_log_dir": "/data0/log/cloudera-scm-firehose",
             "firehose_storage_dir": "/data0/lib/cloudera-service-monitor",
-            "firehose_heapsize": "6442450944",
-            "firehose_non_java_memory_bytes": "6442450944"
+            "firehose_heapsize": "2147483648",
+            "firehose_non_java_memory_bytes": "12884901888"
         },
         "ACTIVITYMONITOR": {
             "mgmt_log_dir": "/data0/log/cloudera-scm-firehose"
@@ -126,6 +126,7 @@
     "enableEnterpriseTrial": true,
     "javaInstallationStrategy": "AUTO",
     "csds": [
-      "http://archive.cloudera.com/spark2/csd/SPARK2_ON_YARN-2.2.0.cloudera4.jar"
+      "http://archive.cloudera.com/spark2/csd/SPARK2_ON_YARN-2.2.0.cloudera4.jar",
+      "http://archive.cloudera.com/CFM/csd/1.0.0.0/NIFI-1.9.0.1.0.0.0-90.jar"
     ]
 }

@@ -14,6 +14,7 @@
     "KAFKA",
     "KUDU",
     "IMPALA",
+    "NIFI",
     "OOZIE",
     "SPARK_ON_YARN",
     "SPARK2_ON_YARN",
@@ -35,12 +36,12 @@
 
   },
   "virtualInstanceGroups": {
-    "edge": {
-      "name": "edge",
+    "edgeGroup01": {
+      "name": "edgeGroup01",
       "virtualInstances": [{
-        "id": "rnwwfssb-809f-42e6-bc21-e6acd7bb3a51-edge-01",
+        "id": "4d468589-051c-4c65-acc9-42265e566b32",
         "template": {
-          "name": "edge-template",
+          "name": "basic-node-template",
           "type": "STANDARD_DS12_V2",
           "image": "cloudera-centos-75-latest",
           "rackId": "/default",
@@ -54,11 +55,11 @@
             "virtualNetworkResourceGroup": "daf-dev-rg",
             "automatic": "false",
             "publicIP": "No",
-            "dataDiskCount": "5",
+            "dataDiskCount": "3",
             "subnetName": "daf-dev-subnet-cloudera",
             "virtualNetwork": "daf-dev-vnet-cloudera",
             "computeResourceGroup": "daf-dev-rg",
-            "instanceNamePrefix": "director",
+            "instanceNamePrefix": "devedg",
             "storageAccountType": "Standard_LRS",
             "useCustomManagedImage": "No",
             "networkSecurityGroupResourceGroup": "daf-dev-rg",
@@ -96,12 +97,12 @@
       },
       "roleTypesConfigs": {}
     },
-    "worker": {
-      "name": "worker",
+    "workerGroup01": {
+      "name": "workerGroup01",
       "virtualInstances": [{
-          "id": "cwqseoxm-809f-42e6-bc21-e6acd7bb3a51-worker-01",
+          "id": "2b212810-ade9-4847-b949-238a2059fb28",
           "template": {
-            "name": "edge-template",
+            "name": "basic-node-template",
             "type": "STANDARD_DS12_V2",
             "image": "cloudera-centos-75-latest",
             "rackId": "/default",
@@ -119,7 +120,7 @@
               "subnetName": "daf-dev-subnet-cloudera",
               "virtualNetwork": "daf-dev-vnet-cloudera",
               "computeResourceGroup": "daf-dev-rg",
-              "instanceNamePrefix": "director",
+              "instanceNamePrefix": "devwrk",
               "storageAccountType": "Standard_LRS",
               "useCustomManagedImage": "No",
               "networkSecurityGroupResourceGroup": "daf-dev-rg",
@@ -132,9 +133,9 @@
           }
         },
         {
-          "id": "cwhqmnzv-809f-42e6-bc21-e6acd7bb3a51-worker-02",
+          "id": "023a2ca2-1c05-4ea4-9291-2412a31578ee",
           "template": {
-            "name": "edge-template",
+            "name": "basic-node-template",
             "type": "STANDARD_DS12_V2",
             "image": "cloudera-centos-75-latest",
             "rackId": "/default",
@@ -152,7 +153,7 @@
               "subnetName": "daf-dev-subnet-cloudera",
               "virtualNetwork": "daf-dev-vnet-cloudera",
               "computeResourceGroup": "daf-dev-rg",
-              "instanceNamePrefix": "director",
+              "instanceNamePrefix": "devwrk",
               "storageAccountType": "Standard_LRS",
               "useCustomManagedImage": "No",
               "networkSecurityGroupResourceGroup": "daf-dev-rg",
@@ -165,9 +166,9 @@
           }
         },
         {
-          "id": "cpxqtktp-809f-42e6-bc21-e6acd7bb3a51-worker-03",
+          "id": "dc319c0b-e42e-4dc3-a543-48adefaf7809",
           "template": {
-            "name": "edge-template",
+            "name": "basic-node-template",
             "type": "STANDARD_DS12_V2",
             "image": "cloudera-centos-75-latest",
             "rackId": "/default",
@@ -185,7 +186,7 @@
               "subnetName": "daf-dev-subnet-cloudera",
               "virtualNetwork": "daf-dev-vnet-cloudera",
               "computeResourceGroup": "daf-dev-rg",
-              "instanceNamePrefix": "director",
+              "instanceNamePrefix": "devwrk",
               "storageAccountType": "Standard_LRS",
               "useCustomManagedImage": "No",
               "networkSecurityGroupResourceGroup": "daf-dev-rg",
@@ -205,6 +206,9 @@
         ],
         "HDFS": [
           "DATANODE"
+        ],
+        "HIVE": [
+          "GATEWAY"
         ],
         "KUDU": [
           "KUDU_TSERVER"
@@ -232,7 +236,8 @@
         "KUDU": {
           "KUDU_TSERVER": {
             "fs_wal_dir": "/data1/kudu/tabletwal",
-            "fs_data_dirs": "/data2/kudu/tablet,/data3/kudu/tablet,/data4/kudu/tablet"
+            "fs_data_dirs": "/data2/kudu/tablet,/data3/kudu/tablet,/data4/kudu/tablet",
+            "memory_limit_hard_bytes": "4294967296"
           }
         },
         "IMPALA": {
@@ -248,12 +253,12 @@
         }
       }
     },
-    "masters": {
-      "name": "masters",
+    "masterGroup01": {
+      "name": "masterGroup01",
       "virtualInstances": [{
-        "id": "rrwpkjnd-dev-cloudera-master-01",
+        "id": "439bcc2b-30e8-4ea0-ab26-f8daffb23ace",
         "template": {
-          "name": "edge-template",
+          "name": "basic-node-template",
           "type": "STANDARD_DS12_V2",
           "image": "cloudera-centos-75-latest",
           "rackId": "/default",
@@ -271,7 +276,7 @@
             "subnetName": "daf-dev-subnet-cloudera",
             "virtualNetwork": "daf-dev-vnet-cloudera",
             "computeResourceGroup": "daf-dev-rg",
-            "instanceNamePrefix": "director",
+            "instanceNamePrefix": "devmst",
             "storageAccountType": "Standard_LRS",
             "useCustomManagedImage": "No",
             "networkSecurityGroupResourceGroup": "daf-dev-rg",
@@ -285,28 +290,29 @@
       }],
       "minCount": 1,
       "serviceTypeToRoleTypes": {
-        "HIVE": [
-          "HIVEMETASTORE",
-          "HIVESERVER2"
-        ],
-        "HUE": [
-          "HUE_SERVER",
-          "HUE_LOAD_BALANCER"
-        ],
-        "ZOOKEEPER": [
-          "SERVER"
-        ],
-        "OOZIE": [
-          "OOZIE_SERVER"
+        "HBASE": [
+          "MASTER",
+          "HBASETHRIFTSERVER"
         ],
         "HDFS": [
           "NAMENODE",
           "SECONDARYNAMENODE",
           "BALANCER"
         ],
-        "HBASE": [
-          "MASTER",
-          "HBASETHRIFTSERVER"
+        "HIVE": [
+          "HIVEMETASTORE",
+          "HIVESERVER2",
+          "GATEWAY"
+        ],
+        "HUE": [
+          "HUE_SERVER",
+          "HUE_LOAD_BALANCER"
+        ],
+        "NIFI": [
+          "NIFI_NODE"
+        ],
+        "OOZIE": [
+          "OOZIE_SERVER"
         ],
         "KAFKA": [
           "KAFKA_BROKER"
@@ -318,10 +324,6 @@
           "CATALOGSERVER",
           "STATESTORE"
         ],
-        "YARN": [
-          "RESOURCEMANAGER",
-          "JOBHISTORY"
-        ],
         "SPARK_ON_YARN": [
           "GATEWAY",
           "SPARK_YARN_HISTORY_SERVER"
@@ -329,6 +331,14 @@
         "SPARK2_ON_YARN": [
           "GATEWAY",
           "SPARK2_YARN_HISTORY_SERVER"
+        ],
+        "YARN": [
+          "RESOURCEMANAGER",
+          "JOBHISTORY",
+          "GATEWAY"
+        ],
+        "ZOOKEEPER": [
+          "SERVER"
         ]
       },
       "roleTypesConfigs": {
@@ -386,6 +396,7 @@
     "http://archive.cloudera.com/cdh5/parcels/5.12/",
     "http://archive.cloudera.com/kafka/parcels/2.2.0/",
     "https://archive.cloudera.com/kudu/parcels/latest/",
-    "http://archive.cloudera.com/spark2/parcels/2.2.0.cloudera4/"
+    "http://archive.cloudera.com/spark2/parcels/2.2.0.cloudera4/",
+    "http://archive.cloudera.com/CFM/parcels/1.0.0.0/CFM-1.0.0.0-el7.parcel"
   ]
 }
