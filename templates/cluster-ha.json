@@ -1,10 +1,11 @@
 {
-  "name": "cdh-ha-01",
+  "name": "cdh-ha-03",
   "productVersions": {
     "CDH": "5.12",
     "KAFKA": "2.2.0",
     "KUDU": "1.4.0",
-    "SPARK2": "2.2.0"
+    "SPARK2": "2.2.0",
+    "CFM": "1.0"
   },
   "services": [
     "HBASE",
@@ -37,10 +38,10 @@
 
   },
   "virtualInstanceGroups": {
-    "edgeGroup01": {
-      "name": "edgeGroup01",
+    "edgeGroupNiFi": {
+      "name": "edgeGroupNiFi",
       "virtualInstances": [{
-        "id": "358e2eae-4544-4270-a4e0-6de79b710939",
+        "id": "d2bf83b0-274f-4181-b6b1-7027ac1a96fd",
         "template": {
           "name": "basic-edge-template",
           "type": "STANDARD_DS12_V2",
@@ -60,7 +61,7 @@
             "subnetName": "daf-dev-subnet-cloudera",
             "virtualNetwork": "daf-dev-vnet-cloudera",
             "computeResourceGroup": "daf-dev-rg",
-            "instanceNamePrefix": "devedg",
+            "instanceNamePrefix": "deving",
             "storageAccountType": "Standard_LRS",
             "useCustomManagedImage": "No",
             "networkSecurityGroupResourceGroup": "daf-dev-rg",
@@ -86,6 +87,9 @@
         "KAFKA": [
           "GATEWAY"
         ],
+        "NIFI": [
+          "NIFI_NODE"
+        ],
         "SPARK_ON_YARN": [
           "GATEWAY"
         ],
@@ -96,12 +100,97 @@
           "GATEWAY"
         ]
       },
-      "roleTypesConfigs": {}
+      "roleTypesConfigs": {
+        "NIFI": {
+          "NIFI_NODE": {
+            "log_dir": "/data0/log/nifi"
+          }
+        },
+        "SPARK_ON_YARN": {
+          "GATEWAY": {
+            "lineage_event_log_dir" : "/data0/log/spark/lineage"
+          }
+        }
+      }
+    },
+    "edgeGroupKafka": {
+      "name": "edgeGroupKafka",
+      "virtualInstances": [{
+        "id": "4157c5f0-3c97-445c-ade2-a8a72cc07138",
+        "template": {
+          "name": "basic-edge-template",
+          "type": "STANDARD_DS12_V2",
+          "image": "cloudera-centos-75-latest",
+          "rackId": "/default",
+          "bootstrapScripts": [{
+            "env": null,
+            "content": "#!/bin/sh\n\n# Install prerequisites\nyum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release\nyum -y update\nyum install -y git2u ansible\n\n# Clone daf-infra-ansible-cloudera repository\nrm -rf daf-infra-cloudera-bootstrap\nGIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone https://github.com/teamdigitale/daf-infra-cloudera-bootstrap.git\n\npushd daf-infra-cloudera-bootstrap\n\nansible-playbook bootstrap.yml -i inventory/hosts-dev.yml\n"
+          }],
+          "preTerminateScripts": [],
+          "config": {
+            "dataDiskSize": "100",
+            "virtualNetworkResourceGroup": "daf-dev-rg",
+            "automatic": "false",
+            "publicIP": "No",
+            "dataDiskCount": "5",
+            "subnetName": "daf-dev-subnet-cloudera",
+            "virtualNetwork": "daf-dev-vnet-cloudera",
+            "computeResourceGroup": "daf-dev-rg",
+            "instanceNamePrefix": "devkfk",
+            "storageAccountType": "Standard_LRS",
+            "useCustomManagedImage": "No",
+            "networkSecurityGroupResourceGroup": "daf-dev-rg",
+            "networkSecurityGroup": "daf-dev-sg-cloudera"
+          },
+          "tags": null,
+          "normalizeInstance": true,
+          "sshUsername": "teamdigitale",
+          "sshHostKeyRetrievalType": "NONE"
+        }
+      }],
+      "minCount": 1,
+      "serviceTypeToRoleTypes": {
+        "HBASE": [
+          "GATEWAY"
+        ],
+        "HDFS": [
+          "GATEWAY"
+        ],
+        "HIVE": [
+          "GATEWAY"
+        ],
+        "KAFKA": [
+          "KAFKA_BROKER",
+          "GATEWAY"
+        ],
+        "SPARK_ON_YARN": [
+          "GATEWAY"
+        ],
+        "SPARK2_ON_YARN": [
+          "GATEWAY"
+        ],
+        "YARN": [
+          "GATEWAY"
+        ]
+      },
+      "roleTypesConfigs": {
+        "KAFKA": {
+          "KAFKA_BROKER": {
+            "broker_max_heap_size": "4096",
+            "log.dirs": "/data1/kafka/data,/data2/kafka/data,/data3/kafka/data,/data4/kafka/data"
+          }
+        },
+        "SPARK_ON_YARN": {
+          "GATEWAY": {
+            "lineage_event_log_dir" : "/data0/log/spark/lineage"
+          }
+        }
+      }
     },
     "workerGroup01": {
       "name": "workerGroup01",
       "virtualInstances": [{
-          "id": "22665565-1baf-4df4-81ba-f0c6508ee1bf",
+          "id": "6aa5f760-3b55-41f8-ae77-294851af333a",
           "template": {
             "name": "basic-wrk-template",
             "type": "STANDARD_DS12_V2",
@@ -134,7 +223,7 @@
           }
         },
         {
-          "id": "6b112322-b1d1-4eeb-bb5b-463120ac04a1",
+          "id": "d9ee1b57-755b-4273-830a-f4523d7cbb10",
           "template": {
             "name": "basic-wrk-template",
             "type": "STANDARD_DS12_V2",
@@ -167,7 +256,7 @@
           }
         },
         {
-          "id": "ccbed99b-653d-4b54-965d-170572d8f418",
+          "id": "10ea1231-825e-45da-8218-510f4b973ee6",
           "template": {
             "name": "basic-wrk-template",
             "type": "STANDARD_DS12_V2",
@@ -211,6 +300,9 @@
         "HIVE": [
           "GATEWAY"
         ],
+        "KAFKA": [
+          "GATEWAY"
+        ],
         "KUDU": [
           "KUDU_TSERVER"
         ],
@@ -228,14 +320,21 @@
         ]
       },
       "roleTypesConfigs": {
+        "HBASE": {
+          "REGIONSERVER": {
+            "hbase_regionserver_log_dir": "/data0/log/hbase"
+          }
+        },
         "HDFS": {
           "DATANODE": {
+            "datanode_log_dir": "/data0/log/hadoop-hdfs",
             "dfs_data_dir_list": "/data1/dfs/dn,/data2/dfs/dn,/data3/dfs/dn,/data4/dfs/dn,/data5/dfs/dn",
             "dfs_datanode_failed_volumes_tolerated": "2"
           }
         },
         "KUDU": {
           "KUDU_TSERVER": {
+            "log_dir": "/data0/log/kudu",
             "fs_wal_dir": "/data1/kudu/tabletwal",
             "fs_data_dirs": "/data2/kudu/tablet,/data3/kudu/tablet,/data4/kudu/tablet",
             "memory_limit_hard_bytes": "4294967296"
@@ -243,11 +342,20 @@
         },
         "IMPALA": {
           "IMPALAD": {
+            "log_dir": "/data0/log/impalad",
+            "lineage_event_log_dir": "/data0/log/impalad/lineage",
+            "audit_event_log_dir": "/data0/log/impalad/audit",
             "scratch_dirs": "/data1/impala/impalad,/data2/impala/impalad,/data3/impala/impalad,/data4/impala/impalad,/data5/impala/impalad"
+          }
+        },
+        "SPARK_ON_YARN": {
+          "GATEWAY": {
+            "lineage_event_log_dir" : "/data0/log/spark/lineage"
           }
         },
         "YARN": {
           "NODEMANAGER": {
+            "node_manager_log_dir": "/data0/log/hadoop-yarn",
             "yarn_nodemanager_local_dirs": "/data1/yarn/nm,/data2/yarn/nm,/data3/yarn/nm,/data4/yarn/nm,/data5/yarn/nm",
             "yarn_nodemanager_log_dirs": "/data1/yarn/container-logs,/data2/yarn/container-logs,/data3/yarn/container-logs,/data4/yarn/container-logs,/data5/yarn/container-logs"
           }
@@ -257,7 +365,7 @@
     "masterGroup01": {
       "name": "masterGroup01",
       "virtualInstances": [{
-        "id": "214f75d2-74d2-4aa9-8e1b-9503040b0fa4",
+        "id": "c2754326a-4cea-4921-b4cd-ce882feabaa5",
         "template": {
           "name": "basic-mst-template",
           "type": "STANDARD_DS12_V2",
@@ -290,7 +398,7 @@
         }
       },
       {
-        "id": "48e037e2-2cf7-446e-970d-f689e858ef31",
+        "id": "dca49d5e-a35e-4cf0-b30c-1b9bb43370f3",
         "template": {
           "name": "basic-mst-template",
           "type": "STANDARD_DS12_V2",
@@ -342,10 +450,16 @@
           "HUE_LOAD_BALANCER"
         ],
         "KAFKA": [
-          "KAFKA_BROKER"
+          "GATEWAY"
         ],
         "KUDU": [
           "KUDU_MASTER"
+        ],
+        "SPARK_ON_YARN": [
+          "GATEWAY"
+        ],
+        "SPARK2_ON_YARN": [
+          "GATEWAY"
         ],
         "YARN": [
           "RESOURCEMANAGER",
@@ -356,13 +470,22 @@
         ]
       },
       "roleTypesConfigs": {
+        "HBASE": {
+          "MASTER": {
+            "hbase_master_log_dir": "/data0/log/hbase"
+          }
+        },
         "HDFS": {
           "NAMENODE": {
+            "namenode_log_dir": "/data0/log/hadoop-hdfs",
             "dfs_name_dir_list": "/data2/dfs/nn",
             "namenode_java_heapsize": "4294967296",
             "dfs_federation_namenode_nameservice": "nameservice1",
             "dfs_namenode_quorum_journal_name": "nameservice1",
             "autofailover_enabled": "true"
+          },
+          "FAILOVERCONTROLLER": {
+            "failover_controller_log_dir": "/data0/log/hadoop-hdfs"
           },
           "JOURNALNODE": {
             "dfs_journalnode_edits_dir": "/data3/dfs/jn"
@@ -370,27 +493,43 @@
         },
         "HIVE": {
           "HIVESERVER2": {
+            "hive_log_dir": "/data0/log/hive",
             "hiveserver2_spark_executor_cores": "4"
           },
           "HIVEMETASTORE": {
+            "hive_log_dir": "/data0/log/hive",
             "hive_enable_db_notification": "true",
             "hive_metastore_delegation_token_store": "org.apache.hadoop.hive.thrift.DBTokenStore"
           }
         },
-        "KAFKA": {
-          "KAFKA_BROKER": {
-            "broker_max_heap_size": "512",
-            "log.dirs": "/data4/kafka/data"
+        "HUE": {
+          "HUE_SERVER": {
+            "hue_server_log_dir": "/data0/log/hue"
+          },
+          "KT_RENEWER": {
+            "kt_renewer_log_dir": "/data0/log/hue"
           }
         },
         "KUDU": {
           "KUDU_MASTER": {
+            "log_dir": "/data0/log/kudu",
             "fs_wal_dir": "/data5/kudu/masterwal",
             "fs_data_dirs": "/data6/kudu/master"
           }
         },
+        "SPARK_ON_YARN": {
+          "GATEWAY": {
+            "lineage_event_log_dir" : "/data0/log/spark/lineage"
+          }
+        },
+        "YARN": {
+          "RESOURCEMANAGER": {
+            "resource_manager_log_dir": "/data0/log/hadoop-yarn"
+          }
+        },
         "ZOOKEEPER": {
           "SERVER": {
+            "zk_server_log_dir": "/data0/log/zookeeper",
             "dataDir": "/data1/zk",
             "dataLogDir": "/data1/zk",
             "maxClientCnxns": "500"
@@ -401,7 +540,7 @@
     "masterGroup02": {
       "name": "masterGroup02",
       "virtualInstances": [{
-        "id": "a9336a1c-2efa-417e-83f3-a0c80935abc1",
+        "id": "0b066249-8dbe-4181-9377-f6c28f18f165",
         "template": {
           "name": "basic-mst-template",
           "type": "STANDARD_DS12_V2",
@@ -447,14 +586,11 @@
         "HIVE": [
           "GATEWAY"
         ],
-        "NIFI": [
-          "NIFI_NODE"
-        ],
         "OOZIE": [
           "OOZIE_SERVER"
         ],
         "KAFKA": [
-          "KAFKA_BROKER"
+          "GATEWAY"
         ],
         "KUDU": [
           "KUDU_MASTER"
@@ -480,30 +616,64 @@
         ]
       },
       "roleTypesConfigs": {
+        "HBASE": {
+          "HBASETHRIFTSERVER": {
+            "hbase_thriftserver_log_dir": "/data0/log/hbase"
+          },
+          "HBASERESTSERVER": {
+            "hbase_restserver_log_dir": "/data0/log/hbase"
+          }
+        },
         "HDFS": {
           "JOURNALNODE": {
             "dfs_journalnode_edits_dir": "/data2/dfs/jn"
+          },
+          "HTTPFS": {
+            "httpfs_log_dir": "/data0/log/hadoop-httpfs"
           }
         },
-        "KAFKA": {
-          "KAFKA_BROKER": {
-            "broker_max_heap_size": "512",
-            "log.dirs": "/data3/kafka/data"
+        "IMPALA": {
+          "CATALOGSERVER": {
+            "log_dir": "/data0/log/catalogd"
+          },
+          "STATESTORE": {
+            "log_dir": "/data0/log/statestore"
           }
         },
         "KUDU": {
           "KUDU_MASTER": {
+            "log_dir": "/data0/log/kudu",
             "fs_wal_dir": "/data4/kudu/masterwal",
             "fs_data_dirs": "/data5/kudu/master"
           }
         },
         "OOZIE": {
           "OOZIE_SERVER": {
+            "oozie_log_dir": "/data0/log/oozie",
             "oozie_plugins_list": "org.apache.oozie.service.ZKLocksService,org.apache.oozie.service.ZKXLogStreamingService,org.apache.oozie.service.ZKJobsConcurrencyService,org.apache.oozie.service.ZKUUIDService"
+          }
+        },
+        "SPARK_ON_YARN": {
+          "GATEWAY": {
+            "lineage_event_log_dir" : "/data0/log/spark/lineage"
+          },
+          "SPARK_YARN_HISTORY_SERVER": {
+            "log_dir": "/data0/log/spark"
+          }
+        },
+        "SPARK2_ON_YARN": {
+          "SPARK2_YARN_HISTORY_SERVER": {
+            "log_dir": "/data0/log/spark2"
+          }
+        },
+        "YARN": {
+          "JOBHISTORY": {
+            "mr2_jobhistory_log_dir": "/data0/log/hadoop-mapreduce"
           }
         },
         "ZOOKEEPER": {
           "SERVER": {
+            "zk_server_log_dir": "/data0/log/zookeeper",
             "dataDir": "/data1/zk",
             "dataLogDir": "/data1/zk",
             "maxClientCnxns": "500"
@@ -530,10 +700,10 @@
     }
   },
   "parcelRepositories": [
-    "http://archive.cloudera.com/cdh5/parcels/5.12/",
-    "http://archive.cloudera.com/kafka/parcels/2.2.0/",
+    "https://archive.cloudera.com/cdh5/parcels/5.12/",
+    "https://archive.cloudera.com/kafka/parcels/2.2.0/",
     "https://archive.cloudera.com/kudu/parcels/latest/",
-    "http://archive.cloudera.com/spark2/parcels/2.2.0.cloudera4/",
-    "http://archive.cloudera.com/CFM/parcels/1.0.0.0/"
+    "https://archive.cloudera.com/spark2/parcels/2.2.0.cloudera4/",
+    "https://archive.cloudera.com/CFM/parcels/1.0.0.0/"
   ]
 }
