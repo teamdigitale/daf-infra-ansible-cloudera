@@ -4,7 +4,8 @@
     "CDH": "5.12",
     "KAFKA": "2.2.0",
     "KUDU": "1.4.0",
-    "SPARK2": "2.2.0"
+    "SPARK2": "2.2.0",
+    "CFM": "1.0"
   },
   "services": [
     "HBASE",
