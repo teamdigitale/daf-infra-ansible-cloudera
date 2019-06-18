@@ -1,7 +1,7 @@
 {
-    "name": "Cloudera-Manager-on-Azure-01",
+    "name": "CM-Massimo-01",
     "managerVirtualInstance": {
-        "id": "azureTest2-deployment-01",
+        "id": "mryptjho-cm-01",
         "template": {
             "name": "edge-template",
             "type": "STANDARD_DS12_V2",
@@ -113,6 +113,9 @@
             "audit_event_log_dir": "/data0/log/cloudera-scm-navigator/audit",
             "data_dir": "/data0/lib/cloudera-scm-navigator",
             "mgmt_log_dir": "/data0/log/cloudera-scm-navigator"
+        },
+        "HOSTS": {
+          "memory_overcommit_threshold": "0.9"
         }
 
     },
