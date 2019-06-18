@@ -346,6 +346,9 @@
           "NAMENODE": {
             "dfs_name_dir_list": "/data2/dfs/nn",
             "namenode_java_heapsize": "4294967296"
+          },
+          "SECONDARYNAMENODE": {
+            "secondary_namenode_java_heapsize": "4294967296"
           }
         },
         "HIVE": {
