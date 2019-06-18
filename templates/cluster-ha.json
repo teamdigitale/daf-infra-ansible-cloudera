@@ -1,0 +1,539 @@
+{
+  "name": "cdh-ha-01",
+  "productVersions": {
+    "CDH": "5.12",
+    "KAFKA": "2.2.0",
+    "KUDU": "1.4.0",
+    "SPARK2": "2.2.0"
+  },
+  "services": [
+    "HBASE",
+    "HDFS",
+    "HIVE",
+    "HUE",
+    "KAFKA",
+    "KUDU",
+    "IMPALA",
+    "NIFI",
+    "OOZIE",
+    "SPARK_ON_YARN",
+    "SPARK2_ON_YARN",
+    "YARN",
+    "ZOOKEEPER"
+  ],
+  "servicesConfigs": {
+    "HDFS": {
+      "hadoop_security_authorization": "true",
+      "dfs_ha_fencing_methods": "shell(true)",
+      "dfs_namenode_acls_enabled": "true"
+    },
+    "HIVE": {
+      "audit_event_log_dir": "/data0/log/hive/audit",
+      "lineage_event_log_dir": "/data0/log/hive/lineage"
+    },
+    "HBASE": {
+      "audit_event_log_dir": "/data0/log/hbase/audit"
+    }
+
+  },
+  "virtualInstanceGroups": {
+    "edgeGroup01": {
+      "name": "edgeGroup01",
+      "virtualInstances": [{
+        "id": "358e2eae-4544-4270-a4e0-6de79b710939",
+        "template": {
+          "name": "basic-edge-template",
+          "type": "STANDARD_DS12_V2",
+          "image": "cloudera-centos-75-latest",
+          "rackId": "/default",
+          "bootstrapScripts": [{
+            "env": null,
+            "content": "#!/bin/sh\n\n# Install prerequisites\nyum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release\nyum -y update\nyum install -y git2u ansible\n\n# Clone daf-infra-ansible-cloudera repository\nrm -rf daf-infra-cloudera-bootstrap\nGIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone https://github.com/teamdigitale/daf-infra-cloudera-bootstrap.git\n\npushd daf-infra-cloudera-bootstrap\n\nansible-playbook bootstrap.yml -i inventory/hosts-dev.yml\n"
+          }],
+          "preTerminateScripts": [],
+          "config": {
+            "dataDiskSize": "100",
+            "virtualNetworkResourceGroup": "daf-dev-rg",
+            "automatic": "false",
+            "publicIP": "No",
+            "dataDiskCount": "3",
+            "subnetName": "daf-dev-subnet-cloudera",
+            "virtualNetwork": "daf-dev-vnet-cloudera",
+            "computeResourceGroup": "daf-dev-rg",
+            "instanceNamePrefix": "devedg",
+            "storageAccountType": "Standard_LRS",
+            "useCustomManagedImage": "No",
+            "networkSecurityGroupResourceGroup": "daf-dev-rg",
+            "networkSecurityGroup": "daf-dev-sg-cloudera"
+          },
+          "tags": null,
+          "normalizeInstance": true,
+          "sshUsername": "teamdigitale",
+          "sshHostKeyRetrievalType": "NONE"
+        }
+      }],
+      "minCount": 1,
+      "serviceTypeToRoleTypes": {
+        "HBASE": [
+          "GATEWAY"
+        ],
+        "HDFS": [
+          "GATEWAY"
+        ],
+        "HIVE": [
+          "GATEWAY"
+        ],
+        "KAFKA": [
+          "GATEWAY"
+        ],
+        "SPARK_ON_YARN": [
+          "GATEWAY"
+        ],
+        "SPARK2_ON_YARN": [
+          "GATEWAY"
+        ],
+        "YARN": [
+          "GATEWAY"
+        ]
+      },
+      "roleTypesConfigs": {}
+    },
+    "workerGroup01": {
+      "name": "workerGroup01",
+      "virtualInstances": [{
+          "id": "22665565-1baf-4df4-81ba-f0c6508ee1bf",
+          "template": {
+            "name": "basic-wrk-template",
+            "type": "STANDARD_DS12_V2",
+            "image": "cloudera-centos-75-latest",
+            "rackId": "/default",
+            "bootstrapScripts": [{
+              "env": null,
+              "content": "#!/bin/sh\n\n# Install prerequisites\nyum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release\nyum -y update\nyum install -y git2u ansible\n\n# Clone daf-infra-ansible-cloudera repository\nrm -rf daf-infra-cloudera-bootstrap\nGIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone https://github.com/teamdigitale/daf-infra-cloudera-bootstrap.git\n\npushd daf-infra-cloudera-bootstrap\n\nansible-playbook bootstrap.yml -i inventory/hosts-dev.yml\n"
+            }],
+            "preTerminateScripts": [],
+            "config": {
+              "dataDiskSize": "100",
+              "virtualNetworkResourceGroup": "daf-dev-rg",
+              "automatic": "false",
+              "publicIP": "No",
+              "dataDiskCount": "5",
+              "subnetName": "daf-dev-subnet-cloudera",
+              "virtualNetwork": "daf-dev-vnet-cloudera",
+              "computeResourceGroup": "daf-dev-rg",
+              "instanceNamePrefix": "devwrk",
+              "storageAccountType": "Standard_LRS",
+              "useCustomManagedImage": "No",
+              "networkSecurityGroupResourceGroup": "daf-dev-rg",
+              "networkSecurityGroup": "daf-dev-sg-cloudera"
+            },
+            "tags": null,
+            "normalizeInstance": true,
+            "sshUsername": "teamdigitale",
+            "sshHostKeyRetrievalType": "NONE"
+          }
+        },
+        {
+          "id": "6b112322-b1d1-4eeb-bb5b-463120ac04a1",
+          "template": {
+            "name": "basic-wrk-template",
+            "type": "STANDARD_DS12_V2",
+            "image": "cloudera-centos-75-latest",
+            "rackId": "/default",
+            "bootstrapScripts": [{
+              "env": null,
+              "content": "#!/bin/sh\n\n# Install prerequisites\nyum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release\nyum -y update\nyum install -y git2u ansible\n\n# Clone daf-infra-ansible-cloudera repository\nrm -rf daf-infra-cloudera-bootstrap\nGIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone https://github.com/teamdigitale/daf-infra-cloudera-bootstrap.git\n\npushd daf-infra-cloudera-bootstrap\n\nansible-playbook bootstrap.yml -i inventory/hosts-dev.yml\n"
+            }],
+            "preTerminateScripts": [],
+            "config": {
+              "dataDiskSize": "100",
+              "virtualNetworkResourceGroup": "daf-dev-rg",
+              "automatic": "false",
+              "publicIP": "No",
+              "dataDiskCount": "5",
+              "subnetName": "daf-dev-subnet-cloudera",
+              "virtualNetwork": "daf-dev-vnet-cloudera",
+              "computeResourceGroup": "daf-dev-rg",
+              "instanceNamePrefix": "devwrk",
+              "storageAccountType": "Standard_LRS",
+              "useCustomManagedImage": "No",
+              "networkSecurityGroupResourceGroup": "daf-dev-rg",
+              "networkSecurityGroup": "daf-dev-sg-cloudera"
+            },
+            "tags": null,
+            "normalizeInstance": true,
+            "sshUsername": "teamdigitale",
+            "sshHostKeyRetrievalType": "NONE"
+          }
+        },
+        {
+          "id": "ccbed99b-653d-4b54-965d-170572d8f418",
+          "template": {
+            "name": "basic-wrk-template",
+            "type": "STANDARD_DS12_V2",
+            "image": "cloudera-centos-75-latest",
+            "rackId": "/default",
+            "bootstrapScripts": [{
+              "env": null,
+              "content": "#!/bin/sh\n\n# Install prerequisites\nyum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release\nyum -y update\nyum install -y git2u ansible\n\n# Clone daf-infra-ansible-cloudera repository\nrm -rf daf-infra-cloudera-bootstrap\nGIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone https://github.com/teamdigitale/daf-infra-cloudera-bootstrap.git\n\npushd daf-infra-cloudera-bootstrap\n\nansible-playbook bootstrap.yml -i inventory/hosts-dev.yml\n"
+            }],
+            "preTerminateScripts": [],
+            "config": {
+              "dataDiskSize": "100",
+              "virtualNetworkResourceGroup": "daf-dev-rg",
+              "automatic": "false",
+              "publicIP": "No",
+              "dataDiskCount": "5",
+              "subnetName": "daf-dev-subnet-cloudera",
+              "virtualNetwork": "daf-dev-vnet-cloudera",
+              "computeResourceGroup": "daf-dev-rg",
+              "instanceNamePrefix": "devwrk",
+              "storageAccountType": "Standard_LRS",
+              "useCustomManagedImage": "No",
+              "networkSecurityGroupResourceGroup": "daf-dev-rg",
+              "networkSecurityGroup": "daf-dev-sg-cloudera"
+            },
+            "tags": null,
+            "normalizeInstance": true,
+            "sshUsername": "teamdigitale",
+            "sshHostKeyRetrievalType": "NONE"
+          }
+        }
+      ],
+      "minCount": 3,
+      "serviceTypeToRoleTypes": {
+        "HBASE": [
+          "REGIONSERVER"
+        ],
+        "HDFS": [
+          "DATANODE"
+        ],
+        "HIVE": [
+          "GATEWAY"
+        ],
+        "KUDU": [
+          "KUDU_TSERVER"
+        ],
+        "IMPALA": [
+          "IMPALAD"
+        ],
+        "SPARK_ON_YARN": [
+          "GATEWAY"
+        ],
+        "SPARK2_ON_YARN": [
+          "GATEWAY"
+        ],
+        "YARN": [
+          "NODEMANAGER"
+        ]
+      },
+      "roleTypesConfigs": {
+        "HDFS": {
+          "DATANODE": {
+            "dfs_data_dir_list": "/data1/dfs/dn,/data2/dfs/dn,/data3/dfs/dn,/data4/dfs/dn,/data5/dfs/dn",
+            "dfs_datanode_failed_volumes_tolerated": "2"
+          }
+        },
+        "KUDU": {
+          "KUDU_TSERVER": {
+            "fs_wal_dir": "/data1/kudu/tabletwal",
+            "fs_data_dirs": "/data2/kudu/tablet,/data3/kudu/tablet,/data4/kudu/tablet",
+            "memory_limit_hard_bytes": "4294967296"
+          }
+        },
+        "IMPALA": {
+          "IMPALAD": {
+            "scratch_dirs": "/data1/impala/impalad,/data2/impala/impalad,/data3/impala/impalad,/data4/impala/impalad,/data5/impala/impalad"
+          }
+        },
+        "YARN": {
+          "NODEMANAGER": {
+            "yarn_nodemanager_local_dirs": "/data1/yarn/nm,/data2/yarn/nm,/data3/yarn/nm,/data4/yarn/nm,/data5/yarn/nm",
+            "yarn_nodemanager_log_dirs": "/data1/yarn/container-logs,/data2/yarn/container-logs,/data3/yarn/container-logs,/data4/yarn/container-logs,/data5/yarn/container-logs"
+          }
+        }
+      }
+    },
+    "masterGroup01": {
+      "name": "masterGroup01",
+      "virtualInstances": [{
+        "id": "214f75d2-74d2-4aa9-8e1b-9503040b0fa4",
+        "template": {
+          "name": "basic-mst-template",
+          "type": "STANDARD_DS12_V2",
+          "image": "cloudera-centos-75-latest",
+          "rackId": "/default",
+          "bootstrapScripts": [{
+            "env": null,
+            "content": "#!/bin/sh\n\n# Install prerequisites\nyum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release\nyum -y update\nyum install -y git2u ansible\n\n# Clone daf-infra-ansible-cloudera repository\nrm -rf daf-infra-cloudera-bootstrap\nGIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone https://github.com/teamdigitale/daf-infra-cloudera-bootstrap.git\n\npushd daf-infra-cloudera-bootstrap\n\nansible-playbook bootstrap.yml -i inventory/hosts-dev.yml\n"
+          }],
+          "preTerminateScripts": [],
+          "config": {
+            "dataDiskSize": "100",
+            "virtualNetworkResourceGroup": "daf-dev-rg",
+            "automatic": "false",
+            "publicIP": "No",
+            "dataDiskCount": "6",
+            "subnetName": "daf-dev-subnet-cloudera",
+            "virtualNetwork": "daf-dev-vnet-cloudera",
+            "computeResourceGroup": "daf-dev-rg",
+            "instanceNamePrefix": "devmst",
+            "storageAccountType": "Standard_LRS",
+            "useCustomManagedImage": "No",
+            "networkSecurityGroupResourceGroup": "daf-dev-rg",
+            "networkSecurityGroup": "daf-dev-sg-cloudera"
+          },
+          "tags": null,
+          "normalizeInstance": true,
+          "sshUsername": "teamdigitale",
+          "sshHostKeyRetrievalType": "NONE"
+        }
+      },
+      {
+        "id": "48e037e2-2cf7-446e-970d-f689e858ef31",
+        "template": {
+          "name": "basic-mst-template",
+          "type": "STANDARD_DS12_V2",
+          "image": "cloudera-centos-75-latest",
+          "rackId": "/default",
+          "bootstrapScripts": [{
+            "env": null,
+            "content": "#!/bin/sh\n\n# Install prerequisites\nyum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release\nyum -y update\nyum install -y git2u ansible\n\n# Clone daf-infra-ansible-cloudera repository\nrm -rf daf-infra-cloudera-bootstrap\nGIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone https://github.com/teamdigitale/daf-infra-cloudera-bootstrap.git\n\npushd daf-infra-cloudera-bootstrap\n\nansible-playbook bootstrap.yml -i inventory/hosts-dev.yml\n"
+          }],
+          "preTerminateScripts": [],
+          "config": {
+            "dataDiskSize": "100",
+            "virtualNetworkResourceGroup": "daf-dev-rg",
+            "automatic": "false",
+            "publicIP": "No",
+            "dataDiskCount": "6",
+            "subnetName": "daf-dev-subnet-cloudera",
+            "virtualNetwork": "daf-dev-vnet-cloudera",
+            "computeResourceGroup": "daf-dev-rg",
+            "instanceNamePrefix": "devmst",
+            "storageAccountType": "Standard_LRS",
+            "useCustomManagedImage": "No",
+            "networkSecurityGroupResourceGroup": "daf-dev-rg",
+            "networkSecurityGroup": "daf-dev-sg-cloudera"
+          },
+          "tags": null,
+          "normalizeInstance": true,
+          "sshUsername": "teamdigitale",
+          "sshHostKeyRetrievalType": "NONE"
+        }
+      }],
+      "minCount": 2,
+      "serviceTypeToRoleTypes": {
+        "HBASE": [
+          "MASTER"
+        ],
+        "HDFS": [
+          "NAMENODE",
+          "FAILOVERCONTROLLER",
+          "JOURNALNODE"
+        ],
+        "HIVE": [
+          "HIVESERVER2",
+          "HIVEMETASTORE",
+          "GATEWAY"
+        ],
+        "HUE": [
+          "HUE_SERVER",
+          "HUE_LOAD_BALANCER"
+        ],
+        "KAFKA": [
+          "KAFKA_BROKER"
+        ],
+        "KUDU": [
+          "KUDU_MASTER"
+        ],
+        "YARN": [
+          "RESOURCEMANAGER",
+          "GATEWAY"
+        ],
+        "ZOOKEEPER": [
+          "SERVER"
+        ]
+      },
+      "roleTypesConfigs": {
+        "HDFS": {
+          "NAMENODE": {
+            "dfs_name_dir_list": "/data2/dfs/nn",
+            "namenode_java_heapsize": "4294967296",
+            "dfs_federation_namenode_nameservice": "nameservice1",
+            "dfs_namenode_quorum_journal_name": "nameservice1",
+            "autofailover_enabled": "true"
+          },
+          "JOURNALNODE": {
+            "dfs_journalnode_edits_dir": "/data3/dfs/jn"
+          }
+        },
+        "HIVE": {
+          "HIVESERVER2": {
+            "hiveserver2_spark_executor_cores": "4"
+          },
+          "HIVEMETASTORE": {
+            "hive_enable_db_notification": "true",
+            "hive_metastore_delegation_token_store": "org.apache.hadoop.hive.thrift.DBTokenStore"
+          }
+        },
+        "KAFKA": {
+          "KAFKA_BROKER": {
+            "broker_max_heap_size": "512",
+            "log.dirs": "/data4/kafka/data"
+          }
+        },
+        "KUDU": {
+          "KUDU_MASTER": {
+            "fs_wal_dir": "/data5/kudu/masterwal",
+            "fs_data_dirs": "/data6/kudu/master"
+          }
+        },
+        "ZOOKEEPER": {
+          "SERVER": {
+            "dataDir": "/data1/zk",
+            "dataLogDir": "/data1/zk",
+            "maxClientCnxns": "500"
+          }
+        }
+      }
+    },
+    "masterGroup02": {
+      "name": "masterGroup02",
+      "virtualInstances": [{
+        "id": "a9336a1c-2efa-417e-83f3-a0c80935abc1",
+        "template": {
+          "name": "basic-mst-template",
+          "type": "STANDARD_DS12_V2",
+          "image": "cloudera-centos-75-latest",
+          "rackId": "/default",
+          "bootstrapScripts": [{
+            "env": null,
+            "content": "#!/bin/sh\n\n# Install prerequisites\nyum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release\nyum -y update\nyum install -y git2u ansible\n\n# Clone daf-infra-ansible-cloudera repository\nrm -rf daf-infra-cloudera-bootstrap\nGIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone https://github.com/teamdigitale/daf-infra-cloudera-bootstrap.git\n\npushd daf-infra-cloudera-bootstrap\n\nansible-playbook bootstrap.yml -i inventory/hosts-dev.yml\n"
+          }],
+          "preTerminateScripts": [],
+          "config": {
+            "dataDiskSize": "100",
+            "virtualNetworkResourceGroup": "daf-dev-rg",
+            "automatic": "false",
+            "publicIP": "No",
+            "dataDiskCount": "5",
+            "subnetName": "daf-dev-subnet-cloudera",
+            "virtualNetwork": "daf-dev-vnet-cloudera",
+            "computeResourceGroup": "daf-dev-rg",
+            "instanceNamePrefix": "devmst",
+            "storageAccountType": "Standard_LRS",
+            "useCustomManagedImage": "No",
+            "networkSecurityGroupResourceGroup": "daf-dev-rg",
+            "networkSecurityGroup": "daf-dev-sg-cloudera"
+          },
+          "tags": null,
+          "normalizeInstance": true,
+          "sshUsername": "teamdigitale",
+          "sshHostKeyRetrievalType": "NONE"
+        }
+      }],
+      "minCount": 1,
+      "serviceTypeToRoleTypes": {
+        "HBASE": [
+          "HBASETHRIFTSERVER",
+          "HBASERESTSERVER"
+        ],
+        "HDFS": [
+          "JOURNALNODE",
+          "HTTPFS",
+          "BALANCER"
+        ],
+        "HIVE": [
+          "GATEWAY"
+        ],
+        "NIFI": [
+          "NIFI_NODE"
+        ],
+        "OOZIE": [
+          "OOZIE_SERVER"
+        ],
+        "KAFKA": [
+          "KAFKA_BROKER"
+        ],
+        "KUDU": [
+          "KUDU_MASTER"
+        ],
+        "IMPALA": [
+          "CATALOGSERVER",
+          "STATESTORE"
+        ],
+        "SPARK_ON_YARN": [
+          "GATEWAY",
+          "SPARK_YARN_HISTORY_SERVER"
+        ],
+        "SPARK2_ON_YARN": [
+          "GATEWAY",
+          "SPARK2_YARN_HISTORY_SERVER"
+        ],
+        "YARN": [
+          "JOBHISTORY",
+          "GATEWAY"
+        ],
+        "ZOOKEEPER": [
+          "SERVER"
+        ]
+      },
+      "roleTypesConfigs": {
+        "HDFS": {
+          "JOURNALNODE": {
+            "dfs_journalnode_edits_dir": "/data2/dfs/jn"
+          }
+        },
+        "KAFKA": {
+          "KAFKA_BROKER": {
+            "broker_max_heap_size": "512",
+            "log.dirs": "/data3/kafka/data"
+          }
+        },
+        "KUDU": {
+          "KUDU_MASTER": {
+            "fs_wal_dir": "/data4/kudu/masterwal",
+            "fs_data_dirs": "/data5/kudu/master"
+          }
+        },
+        "OOZIE": {
+          "OOZIE_SERVER": {
+            "oozie_plugins_list": "org.apache.oozie.service.ZKLocksService,org.apache.oozie.service.ZKXLogStreamingService,org.apache.oozie.service.ZKJobsConcurrencyService,org.apache.oozie.service.ZKUUIDService"
+          }
+        },
+        "ZOOKEEPER": {
+          "SERVER": {
+            "dataDir": "/data1/zk",
+            "dataLogDir": "/data1/zk",
+            "maxClientCnxns": "500"
+          }
+        }
+      }
+    }
+  },
+  "externalDatabaseTemplates": {
+    "HIVE": {
+      "name": "hivetemplate",
+      "databaseServerName": "existingmysql1",
+      "databaseNamePrefix": "hivedb"
+    },
+    "HUE": {
+      "name": "huetemplate",
+      "databaseServerName": "existingmysql1",
+      "databaseNamePrefix": "huedb"
+    },
+    "OOZIE": {
+      "name": "oozietemplate",
+      "databaseServerName": "existingmysql1",
+      "databaseNamePrefix": "ooziedb"
+    }
+  },
+  "parcelRepositories": [
+    "http://archive.cloudera.com/cdh5/parcels/5.12/",
+    "http://archive.cloudera.com/kafka/parcels/2.2.0/",
+    "https://archive.cloudera.com/kudu/parcels/latest/",
+    "http://archive.cloudera.com/spark2/parcels/2.2.0.cloudera4/",
+    "http://archive.cloudera.com/CFM/parcels/1.0.0.0/"
+  ]
+}
