@@ -400,6 +400,6 @@
     "http://archive.cloudera.com/kafka/parcels/2.2.0/",
     "https://archive.cloudera.com/kudu/parcels/latest/",
     "http://archive.cloudera.com/spark2/parcels/2.2.0.cloudera4/",
-    "http://archive.cloudera.com/CFM/parcels/1.0.0.0/CFM-1.0.0.0-el7.parcel"
+    "http://archive.cloudera.com/CFM/parcels/1.0.0.0/"
   ]
 }
