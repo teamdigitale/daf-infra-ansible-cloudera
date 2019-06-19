@@ -8,6 +8,17 @@
   gather_facts: yes
 
   tasks:
+    - name: Disable /etc/resolv.conf overwrites by NetworkManager
+      lineinfile:
+        dest: /etc/NetworkManager/NetworkManager.conf
+        regexp: "^dns="
+        line: "dns=none"
+        insertafter: "^\\[main\\]"
+        state: present
+    - name: Restart NetworkManager
+      systemd:
+        name: NetworkManager
+        state: restarted
     - name: Add search domain to /etc/resolv.conf
       lineinfile:
         dest: /etc/resolv.conf
