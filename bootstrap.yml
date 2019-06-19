@@ -13,8 +13,12 @@
         dest: /etc/NetworkManager/NetworkManager.conf
         regexp: "^dns="
         line: "dns=none"
-        insertafter: "^[main]"
+        insertafter: "^\\[main\\]"
         state: present
+    - name: Restart NetworkManager
+      systemd:
+        name: NetworkManager
+        state: restarted
     - name: Add search domain to /etc/resolv.conf
       lineinfile:
         dest: /etc/resolv.conf
