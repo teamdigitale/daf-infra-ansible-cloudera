@@ -74,7 +74,7 @@
             "KDC_HOST": "kerberos-01.mgmt.dev.daf.teamdigitale.internal",
             "SECURITY_REALM": "CLOUDERA.DEV.DAF.TEAMDIGITALE.INTERNAL",
             "KRB_MANAGE_KRB5_CONF": true,
-            "KRB_ENC_TYPES": "aes256-cts aes128-cts des3-hmac-sha1 arcfour-hmac des-hmac-sha1 des-cbc-md5 des-cbc-crc"
+            "KRB_ENC_TYPES": "aes256-cts aes128-cts arcfour-hmac"
         },
         "CLOUDERA_MANAGEMENT_SERVICE": {
             "enable_alerts" : true,
