@@ -1,0 +1,143 @@
+{
+    "name": "dev-cm-secure-01",
+    "managerVirtualInstance": {
+        "id": "2d10439f-5782-4655-89ff-719575f503de",
+        "template": {
+            "name": "basic-node-template",
+            "type": "STANDARD_DS12_V2",
+            "image": "cloudera-centos-75-latest",
+            "rackId": "/default",
+            "bootstrapScripts": [
+                {
+                    "env": null,
+                    "content": "#!/bin/sh\n\n# Install prerequisites\nyum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release\nyum -y update\nyum install -y git2u ansible\n\n# Clone daf-infra-ansible-cloudera repository\nrm -rf daf-infra-cloudera-bootstrap\nGIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone https://github.com/teamdigitale/daf-infra-cloudera-bootstrap.git\n\npushd daf-infra-cloudera-bootstrap\n\nansible-playbook bootstrap.yml -i inventory/hosts-dev.yml\n"
+                }
+            ],
+            "preTerminateScripts": [],
+            "config": {
+                "dataDiskSize": "100",
+                "virtualNetworkResourceGroup": "daf-dev-rg",
+                "automatic": "false",
+                "publicIP": "No",
+                "dataDiskCount": "3",
+                "subnetName": "daf-dev-subnet-cloudera",
+                "virtualNetwork": "daf-dev-vnet-cloudera",
+                "computeResourceGroup": "daf-dev-rg",
+                "instanceNamePrefix": "devcm",
+                "storageAccountType": "Standard_LRS",
+                "useCustomManagedImage": "No",
+                "networkSecurityGroupResourceGroup": "daf-dev-rg",
+                "networkSecurityGroup": "daf-dev-sg-cloudera"
+            },
+            "tags": null,
+            "normalizeInstance": true,
+            "sshUsername": "teamdigitale",
+            "sshHostKeyRetrievalType": "NONE"
+        }
+    },
+    "externalDatabaseTemplates": {
+        "CLOUDERA_MANAGER": {
+            "name": "scmt",
+            "databaseServerName": "existingmysql1",
+            "databaseNamePrefix": "scm",
+            "usernamePrefix": "scmu"
+        },
+        "ACTIVITYMONITOR": {
+            "name": "amont",
+            "databaseServerName": "existingmysql1",
+            "databaseNamePrefix": "amon",
+            "usernamePrefix": "amonu"
+        },
+        "REPORTSMANAGER": {
+            "name": "rmant",
+            "databaseServerName": "existingmysql1",
+            "databaseNamePrefix": "rman",
+            "usernamePrefix": "rmanu"
+        },
+        "NAVIGATOR": {
+            "name": "navt",
+            "databaseServerName": "existingmysql1",
+            "databaseNamePrefix": "nav",
+            "usernamePrefix": "navu"
+        },
+        "NAVIGATORMETASERVER": {
+            "name": "navmst",
+            "databaseServerName": "existingmysql1",
+            "databaseNamePrefix": "navms",
+            "usernamePrefix": "navmsu"
+        }
+    },
+    "configs": {
+        "CLOUDERA_MANAGER": {
+            "custom_banner_html": "Managed by Cloudera Altus Director. DEV environment",
+            "kdc_type": "MIT KDC",
+            "kdc_host": "kerberos-01.mgmt.dev.daf.teamdigitale.internal",
+            "kdc_admin_host": "kerberos-01.mgmt.dev.daf.teamdigitale.internal",
+            "security_realm": "CLOUDERA.DEV.DAF.TEAMDIGITALE.INTERNAL",
+            "krb_manage_krb5_conf": true,
+            "krb_enc_types": "aes256-cts aes128-cts arcfour-hmac",
+            "krb_realms_safety_valve": "kdc = kerberos-02.mgmt.dev.daf.teamdigitale.internal",
+            "krb_domain": "cloudera.dev.daf.teamdigitale.internal"
+        },
+        "CLOUDERA_MANAGEMENT_SERVICE": {
+            "enable_alerts" : true,
+            "enable_config_alerts" : true
+        },
+        "SERVICEMONITOR": {
+            "mgmt_log_dir": "/data0/log/cloudera-scm-firehose",
+            "firehose_storage_dir": "/data0/lib/cloudera-service-monitor",
+            "firehose_heapsize": "2147483648",
+            "firehose_non_java_memory_bytes": "12884901888"
+        },
+        "ACTIVITYMONITOR": {
+            "mgmt_log_dir": "/data0/log/cloudera-scm-firehose"
+        },
+        "HOSTMONITOR": {
+            "mgmt_log_dir": "/data0/log/cloudera-scm-firehose",
+            "firehose_storage_dir": "/data0/lib/cloudera-host-monitor",
+            "firehose_heapsize": "2147483648",
+            "firehose_non_java_memory_bytes": "2147483648"
+        },
+        "REPORTSMANAGER": {
+            "headlamp_scratch_dir": "/data0/lib/cloudera-scm-headlamp",
+            "mgmt_log_dir": "/data0/log/cloudera-scm-headlamp"
+        },
+        "EVENTSERVER": {
+            "mgmt_log_dir": "/data0/log/cloudera-scm-eventserver",
+            "eventserver_index_dir": "/data0/lib/cloudera-scm-eventserver"
+        },
+        "ALERTPUBLISHER": {
+            "mgmt_log_dir": "/data0/log/cloudera-scm-alertpublisher"
+        },
+        "NAVIGATOR": {
+            "mgmt_log_dir": "/data0/log/cloudera-scm-navigator"
+        },
+        "NAVIGATORMETASERVER": {
+            "audit_event_log_dir": "/data0/log/cloudera-scm-navigator/audit",
+            "data_dir": "/data0/lib/cloudera-scm-navigator",
+            "mgmt_log_dir": "/data0/log/cloudera-scm-navigator"
+        },
+        "HOSTS": {
+          "memory_overcommit_threshold": "0.9"
+        }
+    },
+    "repository": "https://archive.cloudera.com/cm6/6.2.0/redhat7/yum",
+    "repositoryKeyUrl": "https://archive.cloudera.com/cm6/6.2/redhat7/yum/RPM-GPG-KEY-cloudera",
+    "tlsEnabled": "true",
+    "tlsConfigurationProperties": {
+      "ca_key_args": "4096",
+      "host_key_args": "4096",
+      "ca_expiration": "240619",
+      "host_expiration": "240619"
+    },
+    "krbAdminUsername": "cloudera/admin@CLOUDERA.DEV.DAF.TEAMDIGITALE.INTERNAL",
+    "krbAdminPassword": "xxxxxxxxxxxxxx",
+    "cmVersion": "6.2.0",
+    "enableEnterpriseTrial": true,
+    "javaInstallationStrategy": "AUTO",
+    "unlimitedJce": "true",
+    "csds": [
+      "http://archive.cloudera.com/spark2/csd/SPARK2_ON_YARN-2.2.0.cloudera4.jar",
+      "http://archive.cloudera.com/CFM/csd/1.0.0.0/NIFI-1.9.0.1.0.0.0-90.jar"
+    ]
+}
