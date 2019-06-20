@@ -352,8 +352,9 @@
             "datanode_log_dir": "/data0/log/hadoop-hdfs",
             "dfs_data_dir_list": "/data1/dfs/dn,/data2/dfs/dn,/data3/dfs/dn,/data4/dfs/dn,/data5/dfs/dn",
             "dfs_datanode_failed_volumes_tolerated": "2",
-            "dfs_datanode_port": "50010",
-            "dfs_datanode_https_port": "50475"
+            "dfs_datanode_port": "2004",
+            "dfs_datanode_http_port": "2006",
+            "dfs_datanode_https_port": "2005"
           }
         },
         "KUDU": {
