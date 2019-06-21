@@ -26,6 +26,8 @@
   "servicesConfigs": {
     "HBASE": {
       "audit_event_log_dir": "/data0/log/hbase/audit",
+      "hbase_security_authentication": "kerberos",
+      "hbase_security_authorization": "true",
       "hbase_restserver_security_authentication": "kerberos",
       "hbase_thriftserver_security_authentication": "auth-conf"
     },
@@ -37,22 +39,57 @@
       "dfs_encrypt_data_transfer": "true",
       "dfs_data_transfer_protection": "privacy",
       "hadoop_rpc_protection": "privacy",
+      "dfs_encrypt_data_transfer_algorithm": "AES/CTR/NoPadding",
       "hadoop_secure_web_ui": "true",
-      "trusted_realms": "CLOUDERA.DEV.DAF.TEAMDIGITALE.INTERNAL,MGMT.DEV.DAF.TEAMDIGITALE.INTERNAL"
+      "trusted_realms": "CLOUDERA.DEV.DAF.TEAMDIGITALE.INTERNAL,MGMT.DEV.DAF.TEAMDIGITALE.INTERNAL",
+      "hdfs_service_config_safety_valve": "<property><name>dfs.disk.balancer.enabled</name><value>true</value></property>",
+      "core_site_safety_valve": "<property><name>hadoop.proxyuser.daf.hosts</name><value>*</value></property><property><name>hadoop.proxyuser.daf.groups</name><value>*</value></property>"
     },
     "HIVE": {
       "audit_event_log_dir": "/data0/log/hive/audit",
-      "lineage_event_log_dir": "/data0/log/hive/lineage"
+      "lineage_event_log_dir": "/data0/log/hive/lineage",
+      "hive_aux_jars_path_dir": "/opt/cloudera/parcels/CDH/lib/hive-hcatalog/share/hcatalog",
+      "hiveserver2_enable_ldap_auth": "true",
+      "hiveserver2_ldap_uri": "ldaps://freeipa-master-01.mgmt.dev.daf.teamdigitale.internal ldaps://freeipa-replica-01.mgmt.dev.daf.teamdigitale.internal ldaps://freeipa-replica-02.mgmt.dev.daf.teamdigitale.internal",
+      "hiveserver2_ldap_basedn": "cn=users,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal"
     },
     "HUE": {
-      "time_zone": "Europe/Rome"
+      "time_zone": "Europe/Rome",
+      "auth_backend": "desktop.auth.backend.LdapBackend",
+      "ldap_url": "ldaps://freeipa-master-01.mgmt.dev.daf.teamdigitale.internal ldaps://freeipa-replica-01.mgmt.dev.daf.teamdigitale.internal ldaps://freeipa-replica-02.mgmt.dev.daf.teamdigitale.internal",
+      "bind_dn": "uid=admin,cn=users,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+      "bind_password": "REDACTED",
+      "base_dn": "cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+      "search_bind_authentication": "true",
+      "ldap_username_pattern": "uid=<username>,cn=users,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+      "user_filter": "(objectclass=posixaccount)",
+      "group_filter": "(objectclass=posixgroup)",
+      "user_name_attr": "uid",
+      "group_name_attr": "cn",
+      "group_member_attr": "memberOf",
+      "test_ldap_user": "admin",
+      "test_ldap_group": "admins"
     },
     "KAFKA": {
+      "kerberos.auth.enable": "true",
       "zookeeper.chroot": "/kafka",
       "auto.create.topics.enable": "false"
     },
+    "KUDU": {
+      "enable_security": "true"
+    },
+    "IMPALA": {
+      "enable_ldap_auth": "true",
+      "impala_ldap_uri": "ldaps://freeipa-master-01.mgmt.dev.daf.teamdigitale.internal ldaps://freeipa-replica-01.mgmt.dev.daf.teamdigitale.internal ldaps://freeipa-replica-02.mgmt.dev.daf.teamdigitale.internal",
+      "impalad_ldap_ca_certificate": "/etc/ipa/ca.crt",
+      "ldap_baseDN": "cn=users,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+      "impala_authorized_proxy_user_config": "hue=*;daf=*"
+    },
+    "NIFI": {
+      "kerberos.auth.enabled": "true"
+    },
     "SENTRY": {
-      "sentry_service_admin_group": "hive,impala,hue,kafka"
+      "sentry_service_admin_group": "hive,impala,hue,kafka,admins"
     },
     "YARN": {
       "hadoop_secure_web_ui": "true"
@@ -82,6 +119,7 @@
             "subnetName": "daf-dev-subnet-cloudera",
             "virtualNetwork": "daf-dev-vnet-cloudera",
             "computeResourceGroup": "daf-dev-rg",
+            "availabilitySet": "daf-dev-as-cloudera-edges",
             "instanceNamePrefix": "deving",
             "storageAccountType": "Standard_LRS",
             "useCustomManagedImage": "No",
@@ -157,6 +195,7 @@
             "subnetName": "daf-dev-subnet-cloudera",
             "virtualNetwork": "daf-dev-vnet-cloudera",
             "computeResourceGroup": "daf-dev-rg",
+            "availabilitySet": "daf-dev-as-cloudera-edges",
             "instanceNamePrefix": "devkfk",
             "storageAccountType": "Standard_LRS",
             "useCustomManagedImage": "No",
@@ -232,6 +271,7 @@
               "subnetName": "daf-dev-subnet-cloudera",
               "virtualNetwork": "daf-dev-vnet-cloudera",
               "computeResourceGroup": "daf-dev-rg",
+              "availabilitySet": "daf-dev-as-cloudera-workers",
               "instanceNamePrefix": "devwrk",
               "storageAccountType": "Standard_LRS",
               "useCustomManagedImage": "No",
@@ -265,6 +305,7 @@
               "subnetName": "daf-dev-subnet-cloudera",
               "virtualNetwork": "daf-dev-vnet-cloudera",
               "computeResourceGroup": "daf-dev-rg",
+              "availabilitySet": "daf-dev-as-cloudera-workers",
               "instanceNamePrefix": "devwrk",
               "storageAccountType": "Standard_LRS",
               "useCustomManagedImage": "No",
@@ -298,6 +339,7 @@
               "subnetName": "daf-dev-subnet-cloudera",
               "virtualNetwork": "daf-dev-vnet-cloudera",
               "computeResourceGroup": "daf-dev-rg",
+              "availabilitySet": "daf-dev-as-cloudera-workers",
               "instanceNamePrefix": "devwrk",
               "storageAccountType": "Standard_LRS",
               "useCustomManagedImage": "No",
@@ -412,6 +454,7 @@
               "subnetName": "daf-dev-subnet-cloudera",
               "virtualNetwork": "daf-dev-vnet-cloudera",
               "computeResourceGroup": "daf-dev-rg",
+              "availabilitySet": "daf-dev-as-cloudera-masters",
               "instanceNamePrefix": "devmst",
               "storageAccountType": "Standard_LRS",
               "useCustomManagedImage": "No",
@@ -445,6 +488,7 @@
               "subnetName": "daf-dev-subnet-cloudera",
               "virtualNetwork": "daf-dev-vnet-cloudera",
               "computeResourceGroup": "daf-dev-rg",
+              "availabilitySet": "daf-dev-as-cloudera-masters",
               "instanceNamePrefix": "devmst",
               "storageAccountType": "Standard_LRS",
               "useCustomManagedImage": "No",
@@ -508,8 +552,8 @@
             "namenode_log_dir": "/data0/log/hadoop-hdfs",
             "dfs_name_dir_list": "/data2/dfs/nn",
             "namenode_java_heapsize": "4294967296",
-            "dfs_federation_namenode_nameservice": "nameservice1",
-            "dfs_namenode_quorum_journal_name": "nameservice1",
+            "dfs_federation_namenode_nameservice": "daf-dev-ns",
+            "dfs_namenode_quorum_journal_name": "daf-dev-ns",
             "autofailover_enabled": "true"
           },
           "FAILOVERCONTROLLER": {
@@ -529,7 +573,8 @@
         },
         "HUE": {
           "HUE_SERVER": {
-            "hue_server_log_dir": "/data0/log/hue"
+            "hue_server_log_dir": "/data0/log/hue",
+            "hue_server_hive_safety_valve": "<property><name>hive.server2.authentication</name><value>kerberos</value></property>"
           },
           "KT_RENEWER": {
             "kt_renewer_log_dir": "/data0/log/hue"
@@ -585,6 +630,7 @@
             "subnetName": "daf-dev-subnet-cloudera",
             "virtualNetwork": "daf-dev-vnet-cloudera",
             "computeResourceGroup": "daf-dev-rg",
+            "availabilitySet": "daf-dev-as-cloudera-masters",
             "instanceNamePrefix": "devmst",
             "storageAccountType": "Standard_LRS",
             "useCustomManagedImage": "No",
@@ -723,22 +769,22 @@
   "externalDatabaseTemplates": {
     "HIVE": {
       "name": "hivetemplate",
-      "databaseServerName": "existingmysql1",
+      "databaseServerName": "altus-mysql-dev",
       "databaseNamePrefix": "hivedb"
     },
     "HUE": {
       "name": "huetemplate",
-      "databaseServerName": "existingmysql1",
+      "databaseServerName": "altus-mysql-dev",
       "databaseNamePrefix": "huedb"
     },
     "OOZIE": {
       "name": "oozietemplate",
-      "databaseServerName": "existingmysql1",
+      "databaseServerName": "altus-mysql-dev",
       "databaseNamePrefix": "ooziedb"
     },
     "SENTRY": {
       "name": "sentrytemplate",
-      "databaseServerName": "existingmysql1",
+      "databaseServerName": "altus-mysql-dev",
       "databaseNamePrefix": "sentrydb"
     }
   },
