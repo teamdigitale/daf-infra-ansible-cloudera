@@ -30,3 +30,17 @@
 
   roles:
     - role: freeipa-client
+
+  post_tasks:
+    # trust CA freeipa
+
+    - name: Copy ca from ipa folder to /etc/pki/ca-trust/source/anchors/
+      copy:
+        path: /etc/ipa/ca.crt
+        dest: /etc/pki/ca-trust/source/anchors/freeipa.crt
+        mode: 644
+
+    - name: Update CA trust
+      shell: update-ca-trust
+      args:
+        chdir: /etc/pki/ca-trust/source/anchors/
