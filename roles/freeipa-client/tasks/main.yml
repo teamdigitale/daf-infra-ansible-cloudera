@@ -1,0 +1,27 @@
+---
+
+- name: Install FreeIPA client and packages required
+  yum:
+    name:
+      - ipa-client
+      - sssd
+      - krb5-pkinit
+    state: present
+
+- name: Set time zone to Europe/Rome
+  timezone:
+    name: Europe/Rome
+
+- name: Ensure that oddjobd has started
+  service:
+    name: oddjobd
+    state: started
+
+- name: Leave the domain
+  shell: |
+    ipa-client-install --uninstall --unattended
+  ignore_errors: true
+
+- name: Configure FreeIPA client
+  shell: |
+    ipa-client-install --force-join --principal {{ ipaadmin_principal }} --password "{{ ipaadmin_password }}" --mkhomedir --force-ntpd --unattended

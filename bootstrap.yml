@@ -7,7 +7,7 @@
   become_method: sudo
   gather_facts: yes
 
-  tasks:
+  pre_tasks:
     - name: Disable /etc/resolv.conf overwrites by NetworkManager
       lineinfile:
         dest: /etc/NetworkManager/NetworkManager.conf
@@ -15,13 +15,18 @@
         line: "dns=none"
         insertafter: "^\\[main\\]"
         state: present
+
     - name: Restart NetworkManager
       systemd:
         name: NetworkManager
         state: restarted
+
     - name: Add search domain to /etc/resolv.conf
       lineinfile:
         dest: /etc/resolv.conf
         regexp: "search"
         line: "search cloudera.{{ current_environment }}.daf.teamdigitale.internal"
         state: present
+
+  roles:
+    - role: freeipa-client
