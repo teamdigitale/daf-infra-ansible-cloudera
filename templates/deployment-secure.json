@@ -1,7 +1,7 @@
 {
-    "name": "dev-cm-secure-01",
+    "name": "daf-dev-cm-secure-01",
     "managerVirtualInstance": {
-        "id": "2d10439f-5782-4655-89ff-719575f503de",
+        "id": "9106cf26-919c-4d49-a974-035c927cfe34",
         "template": {
             "name": "basic-node-template",
             "type": "STANDARD_DS12_V2",
@@ -38,31 +38,31 @@
     "externalDatabaseTemplates": {
         "CLOUDERA_MANAGER": {
             "name": "scmt",
-            "databaseServerName": "existingmysql1",
+            "databaseServerName": "altus-mysql-dev",
             "databaseNamePrefix": "scm",
             "usernamePrefix": "scmu"
         },
         "ACTIVITYMONITOR": {
             "name": "amont",
-            "databaseServerName": "existingmysql1",
+            "databaseServerName": "altus-mysql-dev",
             "databaseNamePrefix": "amon",
             "usernamePrefix": "amonu"
         },
         "REPORTSMANAGER": {
             "name": "rmant",
-            "databaseServerName": "existingmysql1",
+            "databaseServerName": "altus-mysql-dev",
             "databaseNamePrefix": "rman",
             "usernamePrefix": "rmanu"
         },
         "NAVIGATOR": {
             "name": "navt",
-            "databaseServerName": "existingmysql1",
+            "databaseServerName": "altus-mysql-dev",
             "databaseNamePrefix": "nav",
             "usernamePrefix": "navu"
         },
         "NAVIGATORMETASERVER": {
             "name": "navmst",
-            "databaseServerName": "existingmysql1",
+            "databaseServerName": "altus-mysql-dev",
             "databaseNamePrefix": "navms",
             "usernamePrefix": "navmsu"
         }
@@ -71,13 +71,23 @@
         "CLOUDERA_MANAGER": {
             "custom_banner_html": "Managed by Cloudera Altus Director. DEV environment",
             "kdc_type": "MIT KDC",
+            "security_realm": "CLOUDERA.DEV.DAF.TEAMDIGITALE.INTERNAL",
             "kdc_host": "kerberos-01.mgmt.dev.daf.teamdigitale.internal",
             "kdc_admin_host": "kerberos-01.mgmt.dev.daf.teamdigitale.internal",
-            "security_realm": "CLOUDERA.DEV.DAF.TEAMDIGITALE.INTERNAL",
-            "krb_manage_krb5_conf": true,
-            "krb_enc_types": "aes256-cts aes128-cts arcfour-hmac",
             "krb_realms_safety_valve": "kdc = kerberos-02.mgmt.dev.daf.teamdigitale.internal",
-            "krb_domain": "cloudera.dev.daf.teamdigitale.internal"
+            "krb_domain": "cloudera.dev.daf.teamdigitale.internal",
+            "krb_enc_types": "aes256-cts aes128-cts arcfour-hmac",
+            "krb_manage_krb5_conf": true,
+            "auth_backend_order": "LDAP_ONLY",
+            "ldap_type": "LDAP",
+            "ldap_url": "ldaps://freeipa-master-01.mgmt.dev.daf.teamdigitale.internal",
+            "ldap_dn_pattern": "uid={0},cn=users,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+            "ldap_bind_dn": "uid=admin,cn=users,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+            "ldap_bind_pw": "REDACTED",
+            "ldap_user_search_base": "cn=users,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+            "ldap_user_search_filter": "(objectclass=posixaccount)",
+            "ldap_group_search_base": "cn=groups,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+            "ldap_group_search_filter": "(objectclass=posixgroup)"
         },
         "CLOUDERA_MANAGEMENT_SERVICE": {
             "enable_alerts" : true,
@@ -107,7 +117,13 @@
             "eventserver_index_dir": "/data0/lib/cloudera-scm-eventserver"
         },
         "ALERTPUBLISHER": {
-            "mgmt_log_dir": "/data0/log/cloudera-scm-alertpublisher"
+            "mgmt_log_dir": "/data0/log/cloudera-scm-alertpublisher",
+            "alert_mailserver_enabled": "false",
+            "alert_mailserver_hostname": "smtp.gmail.com",
+            "alert_mailserver_username": "daf.technical@gmail.com",
+            "alert_mailserver_password": "REDACTED",
+            "alert_mailserver_from_address": "noreply.azure@daf.technical.local",
+            "alert_mailserver_recipients": "gruggiero@teamdigitale.governo.it"
         },
         "NAVIGATOR": {
             "mgmt_log_dir": "/data0/log/cloudera-scm-navigator"
@@ -115,7 +131,17 @@
         "NAVIGATORMETASERVER": {
             "audit_event_log_dir": "/data0/log/cloudera-scm-navigator/audit",
             "data_dir": "/data0/lib/cloudera-scm-navigator",
-            "mgmt_log_dir": "/data0/log/cloudera-scm-navigator"
+            "mgmt_log_dir": "/data0/log/cloudera-scm-navigator",
+            "auth_backend_order": "CM_THEN_EXTERNAL",
+            "nav_ldap_url": "ldaps://freeipa-master-01.mgmt.dev.daf.teamdigitale.internal ldaps://freeipa-replica-01.mgmt.dev.daf.teamdigitale.internal ldaps://freeipa-replica-02.mgmt.dev.daf.teamdigitale.internal",
+            "nav_ldap_bind_dn": "uid=admin,cn=users,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+            "nav_ldap_bind_pw": "REDACTED",
+            "nav_ldap_user_search_base": "cn=users,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+            "nav_ldap_dn_pattern": "uid={0},cn=users,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+            "nav_ldap_group_search_base": "cn=groups,cn=accounts,dc=mgmt,dc=dev,dc=daf,dc=teamdigitale,dc=internal",
+            "nav_ldap_user_search_filter": "(objectclass=posixaccount)",
+            "nav_ldap_group_search_filter": "(&(objectClass=posixgroup)(member={0}))",
+            "nav_ldap_groups_search_filter": "(&(objectClass=posixgroup)(cn=*{0}*))"
         },
         "HOSTS": {
           "memory_overcommit_threshold": "0.9"
@@ -128,10 +154,11 @@
       "ca_key_args": "4096",
       "host_key_args": "4096",
       "ca_expiration": "240619",
-      "host_expiration": "240619"
+      "host_expiration": "240619",
+      "trusted_ca_certs": "/etc/ipa/ca.crt"
     },
     "krbAdminUsername": "cloudera/admin@CLOUDERA.DEV.DAF.TEAMDIGITALE.INTERNAL",
-    "krbAdminPassword": "xxxxxxxxxxxxxx",
+    "krbAdminPassword": "REDACTED",
     "cmVersion": "6.2.0",
     "enableEnterpriseTrial": true,
     "javaInstallationStrategy": "AUTO",
@@ -139,5 +166,11 @@
     "csds": [
       "http://archive.cloudera.com/spark2/csd/SPARK2_ON_YARN-2.2.0.cloudera4.jar",
       "http://archive.cloudera.com/CFM/csd/1.0.0.0/NIFI-1.9.0.1.0.0.0-90.jar"
+    ],
+    "postCreateScripts": [
+      {
+          "env": null,
+          "content": "# TODO: set -Djavax.net.ssl.trustStore=/var/lib/cloudera-scm-server/certmanager/trust-store/cm-auto-global_truststore.jks in /etc/defaults/cloudera-scm-server\nsystemctl restart cloudera-scm-server"
+      }
     ]
 }
