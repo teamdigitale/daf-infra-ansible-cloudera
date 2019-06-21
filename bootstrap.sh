@@ -11,4 +11,4 @@ GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
 
 pushd daf-infra-cloudera
 
-ansible-playbook bootstrap.yml -i inventory/hosts-dev.yml
+ansible-playbook bootstrap.yml -i inventory/hosts-dev.yml --extra-vars ipaadmin_password=$'IPA_ADMIN_PASSWORD'

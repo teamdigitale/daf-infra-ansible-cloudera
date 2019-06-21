@@ -1,0 +1,17 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: teamdigitale/daf-infra-test-env
+    steps:
+      - checkout
+      - run:
+          name: Execute ansible linting
+          command: |
+            ansible_files=$(git diff-tree --no-commit-id --name-only -r $(git log --pretty=format:'%h' -n 1) | grep ".yaml\|.yml" | tr "\n" " ") || true
+            if [ -z "$ansible_files" ]
+            then
+              echo "No Ansible files to check."
+            else
+              ansible-lint $ansible_files
+            fi
