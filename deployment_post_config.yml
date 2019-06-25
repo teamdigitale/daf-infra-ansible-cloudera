@@ -1,0 +1,22 @@
+---
+
+- name: Ansible post script playbook for Cloudera manager
+  hosts: 127.0.0.1
+  connection: local
+  become: no
+  become_method: sudo
+  gather_facts: no
+
+  tasks:
+    - name: Add ssl.trustStore
+      replace:
+        path: /mnt/c/code/clienti/daf-infra/daf-infra-cloudera/cloudera-scm-server
+        regexp: 'export CMF_JAVA_OPTS="(.*)"'
+        replace: 'export CMF_JAVA_OPTS="\1 -Djavax.net.ssl.trustStore=/var/lib/cloudera-scm-server/certmanager/trust-store/cm-auto-global_truststore.jks"'
+        backup: yes
+      delegate_to: localhost
+
+    - name: Restart service cloudera-scm-server
+      systemd:
+        name: cloudera-scm-server
+        state: restarted
