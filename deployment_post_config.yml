@@ -8,9 +8,9 @@
   gather_facts: no
 
   tasks:
-    - name: Add ssl.trustStore
+    - name: Add ssl.trustStore to CMF_JAVA_OPTS
       replace:
-        path: /mnt/c/code/clienti/daf-infra/daf-infra-cloudera/cloudera-scm-server
+        path: /etc/default/cloudera-scm-server
         regexp: 'export CMF_JAVA_OPTS="(.*)"'
         replace: 'export CMF_JAVA_OPTS="\1 -Djavax.net.ssl.trustStore=/var/lib/cloudera-scm-server/certmanager/trust-store/cm-auto-global_truststore.jks"'
         backup: yes
