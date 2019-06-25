@@ -10,7 +10,7 @@
   tasks:
     - name: Add ssl.trustStore to CMF_JAVA_OPTS
       lineinfile:
-        path: /mnt/c/code/clienti/daf-infra/daf-infra-cloudera/cloudera-scm-server
+        path: /etc/default/cloudera-scm-server
         regexp: '^export CMF_JAVA_OPTS'
         line: >
           export CMF_JAVA_OPTS="-Xmx2G -XX:MaxPermSize=256m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp
