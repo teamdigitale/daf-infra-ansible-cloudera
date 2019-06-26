@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 # Install prerequisites
 yum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release
