@@ -28,17 +28,23 @@
         line: "search cloudera.{{ current_environment }}.daf.teamdigitale.internal"
         state: present
 
-  roles:
-    - role: freeipa-client
+  # roles:
+  #   - role: freeipa-client
 
   post_tasks:
     # trust CA freeipa
 
-    - name: Copy ca from ipa folder to /etc/pki/ca-trust/source/anchors/
-      copy:
-        src: /etc/ipa/ca.crt
+    # - name: Copy ca from ipa folder to /etc/pki/ca-trust/source/anchors/
+    #   copy:
+    #     src: /etc/ipa/ca.crt
+    #     dest: /etc/pki/ca-trust/source/anchors/freeipa.crt
+    #     mode: 644
+
+    - name: Retrieve ca from ipa server to /etc/pki/ca-trust/source/anchors/
+      get_url:
+        url: "https://freeipa-master-01.mgmt.dev.daf.teamdigitale.internal/ipa/config/ca.crt"
         dest: /etc/pki/ca-trust/source/anchors/freeipa.crt
-        mode: 0644
+        mode: '0644'
 
     - name: Update CA trust
       shell: update-ca-trust
