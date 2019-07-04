@@ -44,6 +44,7 @@
       get_url:
         url: "https://freeipa-master-01.mgmt.dev.daf.teamdigitale.internal/ipa/config/ca.crt"
         dest: /etc/pki/ca-trust/source/anchors/freeipa.crt
+        validate_certs: no
         mode: '0644'
 
     - name: Update CA trust
