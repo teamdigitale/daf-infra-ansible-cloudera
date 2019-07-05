@@ -34,6 +34,11 @@
   post_tasks:
     # trust CA freeipa
 
+    - name: Create /etc/ipa dir for ca.crt
+      file:
+        path: /etc/ipa
+        state: directory
+        mode: '0755'
 
     - name: Retrieve ca from ipa server to /etc/ipa/ca.crt
       get_url:
